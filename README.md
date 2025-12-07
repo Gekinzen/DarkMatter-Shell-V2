@@ -108,7 +108,7 @@ This project builds upon and is inspired by:
 
 - **DarkMatter Shell — AvengeMedia**  
 - **DankMaterial Shell**  
-- **PaulZen Hyprland Alpha V1 Framework**  
+- **Zenith Hyprland Alpha V1 Framework**  
 
 Massive respect to their work — Hybrid V2 is a full rewrite but learned from these systems.
 
