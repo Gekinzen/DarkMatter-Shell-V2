@@ -1,42 +1,81 @@
 #!/bin/bash
 
-# ------------------------------------------
-#  SAFE Git Push Script for Gekinzen
-# ------------------------------------------
+# ---------------------------------------------------
+#  Zenith Git Push (Safe, Branch-Aware, No Remote Mod)
+# ---------------------------------------------------
 
-# Location of your stored GitHub token
+# Colors
+GREEN="\e[92m"
+YELLOW="\e[93m"
+RED="\e[91m"
+RESET="\e[0m"
+
+echo -e "${GREEN}Zenith Git Push Utility Loaded${RESET}"
+
+# ---------------------------------------------------
+# 1. Read GitHub Token
+# ---------------------------------------------------
 TOKEN_FILE="$HOME/.config/github_token"
 
-# Check if token file exists
 if [ ! -f "$TOKEN_FILE" ]; then
-    echo "[ERROR] GitHub token file not found at: $TOKEN_FILE"
-    echo "Create it with:  nano ~/.config/github_token"
+    echo -e "${RED}[ERROR] Token file missing: $TOKEN_FILE${RESET}"
     exit 1
 fi
 
-# Load token
 GITHUB_TOKEN=$(cat "$TOKEN_FILE")
 
-# Repo URL
-REPO_URL="https://$GITHUB_TOKEN@github.com/Gekinzen/DarkMatter-Shell-V2.git"
+# ---------------------------------------------------
+# 2. Detect Current Repo & Branch
+# ---------------------------------------------------
+CURRENT_URL=$(git remote get-url origin 2>/dev/null)
 
-# Set remote URL safely
-git remote set-url origin "$REPO_URL"
-
-# Require commit message
-if [ -z "$1" ]; then
-    echo "Usage: ./gitpush.sh \"your commit message\""
+if [ -z "$CURRENT_URL" ]; then
+    echo -e "${RED}[ERROR] No Git remote named 'origin' found!${RESET}"
     exit 1
 fi
 
-# Run Git commands
-echo "[INFO] Staging all changes..."
-git add .
+BRANCH=$(git branch --show-current)
 
-echo "[INFO] Committing changes..."
-git commit -m "$1"
+if [ -z "$BRANCH" ]; then
+    echo -e "${RED}[ERROR] You're not on a branch!${RESET}"
+    exit 1
+fi
 
-echo "[INFO] Pushing to GitHub..."
-git push
+echo -e "${GREEN}Active Branch:${RESET} $BRANCH"
+echo -e "${YELLOW}Origin URL:${RESET} $CURRENT_URL"
 
-echo "[DONE] Push complete!"
+# ---------------------------------------------------
+# 3. Build Tokenized Push URL (TEMP only)
+# ---------------------------------------------------
+if [[ "$CURRENT_URL" == https://* ]]; then
+    PUSH_URL=$(echo "$CURRENT_URL" | sed -E "s#https://#https://$GITHUB_TOKEN@#")
+else
+    echo -e "${RED}[ERROR] Repo must use HTTPS remote URL for token auth.${RESET}"
+    exit 1
+fi
+
+# ---------------------------------------------------
+# 4. Commit message handling
+# ---------------------------------------------------
+if [ -z "$1" ]; then
+    echo -e "${YELLOW}[WARN] No commit message. Using default.${RESET}"
+    COMMIT_MSG="update: auto-push"
+else
+    COMMIT_MSG="$1"
+fi
+
+# ---------------------------------------------------
+# 5. Git Actions
+# ---------------------------------------------------
+echo -e "${YELLOW}[INFO] Staging changes...${RESET}"
+git add -A
+
+echo -e "${YELLOW}[INFO] Committing...${RESET}"
+git commit -m "$COMMIT_MSG"
+
+echo -e "${YELLOW}[INFO] Pushing to branch '$BRANCH'...${RESET}"
+
+# TEMPORARY PUSH USING TOKEN — DOES NOT CHANGE ORIGIN
+git push "$PUSH_URL" "$BRANCH"
+
+echo -e "${GREEN}[DONE] Push complete without modifying origin.${RESET}"
