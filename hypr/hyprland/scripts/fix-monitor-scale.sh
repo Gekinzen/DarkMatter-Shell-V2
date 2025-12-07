@@ -1,12 +1,18 @@
 #!/bin/bash
 
-# -------------------------------------------------------------
-#  Zenith Shell - Monitor Scale Auto-Fixer
-#  Fixes invalid Hyprland scale values, keeps transform intact
-# -------------------------------------------------------------
+# Monitor Scale + Reserved Zones Fixer for Hyprland
+# - Rounds invalid scales to valid Hyprland values
+# - Ensures safe reserved zones (top + bottom) for bars/docks
+# - Keeps bitdepth/other params intact
 
 MONITORS_CONF="$HOME/.config/hypr/monitors.conf"
 BACKUP_CONF="$HOME/.config/hypr/monitors.conf.backup"
+
+# ----- CONFIGURABLE SAFE ZONES -----
+SAFE_TOP=40      # space for QuickShell top bar
+SAFE_BOTTOM=80   # space for QuickShell dock / OSD
+SAFE_LEFT=0
+SAFE_RIGHT=0
 
 round_scale() {
     local input_scale=$1
@@ -30,11 +36,8 @@ round_scale() {
     echo "$rounded"
 }
 
-# ---------------------------------------------
-#  Validate file
-# ---------------------------------------------
 if [ ! -f "$MONITORS_CONF" ]; then
-    echo "monitors.conf not found — skipping scale patch"
+    echo "monitors.conf not found, skipping."
     exit 0
 fi
 
@@ -44,41 +47,65 @@ FIXED=false
 TEMP_FILE=$(mktemp)
 
 while IFS= read -r line; do
+    # comments / blank
+    if [[ $line =~ ^#.*$ ]] || [[ -z "$line" ]]; then
+        echo "$line" >> "$TEMP_FILE"
+        continue
+    fi
 
-    [[ $line =~ ^#.*$ || -z "$line" ]] && echo "$line" >> "$TEMP_FILE" && continue
-
-    # skip transform-only lines
+    # pure transform lines
     if [[ $line =~ ^monitor=.*,transform, ]]; then
         echo "$line" >> "$TEMP_FILE"
         continue
     fi
 
+    # monitor=NAME,RES,POS,SCALE[,extra...]
     if [[ $line =~ ^monitor=([^,]+),([^,]+),([^,]+),([0-9]+\.?[0-9]*)(.*)?$ ]]; then
-        NAME="${BASH_REMATCH[1]}"
-        RES="${BASH_REMATCH[2]}"
-        POS="${BASH_REMATCH[3]}"
-        SCALE="${BASH_REMATCH[4]}"
-        EXTRA="${BASH_REMATCH[5]}"
+        MONITOR_NAME="${BASH_REMATCH[1]}"
+        RESOLUTION="${BASH_REMATCH[2]}"
+        POSITION="${BASH_REMATCH[3]}"
+        CURRENT_SCALE="${BASH_REMATCH[4]}"
+        EXTRA_PARAMS="${BASH_REMATCH[5]}"
 
-        if [[ "$SCALE" =~ ^(1\.0|1\.25|1\.333333|1\.5|1\.666667|1\.75|2\.0|2\.25|2\.5|2\.75|3\.0)$ ]]; then
-            echo "$line" >> "$TEMP_FILE"
-        else
-            FIXED_SCALE=$(round_scale "$SCALE")
-            echo "✓ $NAME: invalid scale $SCALE → $FIXED_SCALE"
-            echo "monitor=$NAME,$RES,$POS,$FIXED_SCALE$EXTRA" >> "$TEMP_FILE"
+        NEW_SCALE="$CURRENT_SCALE"
+
+        if ! [[ "$CURRENT_SCALE" =~ ^(1\.0|1\.25|1\.333333|1\.5|1\.666667|1\.75|2\.0|2\.25|2\.5|2\.75|3\.0)$ ]]; then
+            NEW_SCALE=$(round_scale "$CURRENT_SCALE")
+            echo "✓ Fixed $MONITOR_NAME: scale $CURRENT_SCALE → $NEW_SCALE"
             FIXED=true
         fi
+
+        # Ensure reserved exists and is sane
+        RESERVED_APPEND=",reserved,$SAFE_LEFT,$SAFE_TOP,$SAFE_BOTTOM,$SAFE_RIGHT"
+
+        if [[ "$EXTRA_PARAMS" == *"reserved"* ]]; then
+            # Normalize existing reserved block
+            # replace any reserved,* with our safe block
+            EXTRA_PARAMS=$(echo "$EXTRA_PARAMS" | sed -E "s/,reserved,[0-9]+,[0-9]+,[0-9]+,[0-9]+/$RESERVED_APPEND/")
+        else
+            EXTRA_PARAMS="$EXTRA_PARAMS$RESERVED_APPEND"
+        fi
+
+        FIXED_LINE="monitor=$MONITOR_NAME,$RESOLUTION,$POSITION,$NEW_SCALE$EXTRA_PARAMS"
+        echo "$FIXED_LINE" >> "$TEMP_FILE"
+        FIXED=true
     else
         echo "$line" >> "$TEMP_FILE"
     fi
-
 done < "$MONITORS_CONF"
 
-if [ "$FIXED" = true ]; then
-    mv "$TEMP_FILE" "$MONITORS_CONF"
-    notify-send "Zenith Monitor Fix" "Invalid monitor scales corrected automatically."
-    sleep 0.3
-    hyprctl reload
-else
-    rm "$TEMP_FILE"
-fi
+mv "$TEMP_FILE" "$MONITORS_CONF"
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "✓ monitors.conf updated with safe scales + reserved zones"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+cat "$MONITORS_CONF"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+notify-send "Hyprland Monitors Updated" \
+    "Scales + reserved areas normalized for bars & dock" \
+    -i video-display
+
+sleep 0.5
+hyprctl reload

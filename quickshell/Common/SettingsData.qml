@@ -11,7 +11,7 @@ import qs.Services
 
 Singleton {
     id: root
-
+    property var widgetPositions: ({})
     property var audioRoutesOutput: ({}) // map appKey -> deviceId
     property var audioRoutesInput: ({})  // map appKey -> deviceId
     property string currentThemeName: "blue"
@@ -395,7 +395,9 @@ Singleton {
     property int notificationTimeoutLow: 5000
     property int notificationTimeoutNormal: 5000
     property int notificationTimeoutCritical: 0
-    property var screenPreferences: ({})
+    property var screenPreferences: ({
+
+    })  // Dictionary → { widgetId: { x, y } }
     readonly property string defaultFontFamily: "Inter Variable"
     readonly property string defaultMonoFontFamily: "Fira Code"
     readonly property string _homeUrl: StandardPaths.writableLocation(StandardPaths.HomeLocation)
@@ -407,6 +409,25 @@ Singleton {
     signal workspaceIconsUpdated
 
     property bool _loading: false
+
+
+    function setWidgetPosition(id, x, y) {
+        widgetPositions[id] = { "x": x, "y": y }
+    }
+
+    function getWidgetX(id) {
+        return widgetPositions[id] && widgetPositions[id].x !== undefined
+            ? widgetPositions[id].x
+            : 100
+    }
+
+    function getWidgetY(id) {
+        return widgetPositions[id] && widgetPositions[id].y !== undefined
+            ? widgetPositions[id].y
+            : 100
+    }
+
+
 
     function getEffectiveTimeFormat() {
         if (use24HourClock) {
@@ -775,6 +796,8 @@ Singleton {
                 hideBrightnessSlider = settings.hideBrightnessSlider !== undefined ? settings.hideBrightnessSlider : false
                 widgetBackgroundColor = settings.widgetBackgroundColor !== undefined ? settings.widgetBackgroundColor : "sth"
                 screenPreferences = settings.screenPreferences !== undefined ? settings.screenPreferences : ({})
+                // Load saved widget positions (Zenith Extension)
+                widgetPositions = settings.widgetPositions !== undefined ? settings.widgetPositions : ({})
                 applyStoredTheme()
                 detectAvailableIconThemes()
                 detectQtTools()
@@ -799,6 +822,7 @@ Singleton {
             return
         }
         settingsFile.setText(JSON.stringify({
+                                                "widgetPositions": widgetPositions,
                                                 "currentThemeName": currentThemeName,
                                                 "customThemeFile": customThemeFile,
                                                 "savedColorThemes": savedColorThemes,
@@ -2848,6 +2872,22 @@ Singleton {
     function _shq(s) {
         return "'" + String(s).replace(/'/g, "'\\''") + "'"
     }
+
+
+    function setWidgetPosition(id, x, y) {
+        widgetPositions[id] = { "x": x, "y": y }
+    }
+
+    function getWidgetX(id) {
+        return widgetPositions[id]?.x ?? 100
+    }
+
+    function getWidgetY(id) {
+        return widgetPositions[id]?.y ?? 100
+    }
+
+
+
 
     Component.onCompleted: {
         loadSettings()
