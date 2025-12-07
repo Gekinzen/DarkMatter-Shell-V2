@@ -26,6 +26,7 @@ run_module() {
 run_module detect.sh
 run_module deps_pacman.sh
 run_module deps_aur.sh
+run_module deps_fonts.sh
 run_module copy_quickshell.sh
 run_module copy_hypr.sh
 run_module enable_services.sh
