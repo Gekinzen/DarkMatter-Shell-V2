@@ -2,19 +2,30 @@
 set -e
 
 LOG_FILE="$(dirname "$0")/../logs/install.log"
-log() { echo -e "\e[92m[OK]\e[0m $1" | tee -a "$LOG_FILE"; }
-warn(){ echo -e "\e[93m[WARN]\e[0m $1"| tee -a "$LOG_FILE"; }
+mkdir -p "$(dirname "$LOG_FILE")"
 
-copy_if_exists() {
-  if [[ -d "$1" ]]; then
-    cp -r "$1" "$2"
-    log "Copied: $1 → $2"
-  else
-    warn "Missing config folder: $1"
-  fi
-}
+log()  { echo -e "\e[92m[OK]\e[0m $1"  | tee -a "$LOG_FILE"; }
+warn() { echo -e "\e[93m[WARN]\e[0m $1" | tee -a "$LOG_FILE"; }
 
-copy_if_exists "config/quickshell/" ~/.config/quickshell/
-copy_if_exists "config/hypr/" ~/.config/hypr/
-copy_if_exists "config/mako/" ~/.config/mako/
-copy_if_exists "config/swww/" ~/.config/swww/
+# Detect REAL repo root
+REPO_DIR="$(realpath "$(dirname "$0")/../..")"
+
+SOURCE="$REPO_DIR/config"
+TARGET="$HOME/.config"
+
+log "Copying configuration files from $SOURCE → $TARGET"
+
+DIRS=(quickshell hypr mako swww)
+
+for d in "${DIRS[@]}"; do
+    if [[ ! -d "$SOURCE/$d" ]]; then
+        warn "Missing config folder: $SOURCE/$d"
+        continue
+    fi
+
+    mkdir -p "$TARGET/$d"
+    cp -a "$SOURCE/$d/"* "$TARGET/$d/" 2>/dev/null || true
+    log "Installed config: $d → ~/.config/$d"
+done
+
+log "Config copy stage complete."

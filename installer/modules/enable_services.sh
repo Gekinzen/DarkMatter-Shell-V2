@@ -1,24 +1,25 @@
 #!/usr/bin/env bash
 set -e
 
-LOG_FILE="$(dirname "$0")/../logs/install.log"
-log() { echo -e "\e[92m[OK]\e[0m $1" | tee -a "$LOG_FILE"; }
+LOG="installer/logs/install.log"
+log() { echo -e "\e[92m[OK]\e[0m $1" | tee -a "$LOG"; }
 
-# QuickShell systemd service
-cat << EOF > ~/.config/systemd/user/quickshell.service
+mkdir -p ~/.config/systemd/user
+
+cat <<EOF > ~/.config/systemd/user/quickshell.service
 [Unit]
 Description=QuickShell Desktop Shell
 After=graphical-session.target
 
 [Service]
-ExecStart=/usr/bin/quickshell --config ~/.config/quickshell/config.json
-Restart=on-failure
+ExecStart=/usr/bin/qs
+Restart=always
 
 [Install]
 WantedBy=default.target
 EOF
 
 systemctl --user daemon-reload
-systemctl --user enable --now quickshell.service
+systemctl --user enable --now quickshell.service || true
 
-log "Enabled QuickShell service."
+log "QuickShell systemd service enabled."
