@@ -1,3 +1,13 @@
+```
+      /\       
+     /  \      
+    / /\ \     
+   / ____ \    
+  /_/    \_\   
+     Z E N     
+  Zenith Hybrid Alpha V2 — Wayland Shell Project
+```
+
 <h1 align="center">🔥 DarkMatter Shell — Zenith Hybrid Alpha V2</h1>
 
 <p align="center">
@@ -8,91 +18,113 @@
 </p>
 
 <p align="center">
-  <strong>A fully rewritten, enhanced, hybrid shell environment combining QuickShell, Hyprland, DarkMatter, DankMaterial, and PaulZen Alpha V1.</strong>
-</p>
-
----
-
-## 📸 Showcase
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/354c34ca-f393-49de-ac9f-e46c0367fc4a" width="90%" />
-  <img src="https://github.com/user-attachments/assets/705f616d-524b-465e-8451-7fe0ecd1fb30" width="90%" />
-  <img src="https://github.com/user-attachments/assets/314f8656-2cce-4a23-b089-f99cfc8a22b7" width="90%" />
-  <img src="https://github.com/user-attachments/assets/ec69120b-96e4-49cd-9da6-68ed17cf0c00" width="90%" />
-  <img src="https://github.com/user-attachments/assets/b600c5d2-dad0-445d-8d23-83efe3aa0830" width="90%" />
+  <strong>A fully rewritten hybrid shell environment combining QuickShell, Hyprland, DarkMatter, DankMaterial, and Zenith Alpha V1.</strong>
 </p>
 
 ---
 
 # 📘 Table of Contents
-1. [Overview](#-overview)
-2. [Features](#-features)
-3. [Installation](#-installation-my-version)
-4. [Credits](#-credits--base-systems)
-5. [License](#-license)
+1. [Overview](#-overview)  
+2. [Features](#-features)  
+3. [Installation](#-installation-my-version)  
+4. [Inspiration & Shoutouts](#-inspiration--shoutouts)  
+5. [Credits](#-credits--base-systems)  
+6. [License](#-license)
 
 ---
 
 # 📖 Overview
-**PaulZen Hybrid V2** is a modernized fork-and-rewrite merging:
 
-- QuickShell  
-- Hyprland  
-- DarkMatterShell (AvengeMedia)  
-- DankMaterialShell  
-- PaulZen Hyprland Alpha V1 engine  
+**Zenith Hybrid Alpha V2** is a modern, optimized rewrite that merges:
 
-The goal:  
-> **A clean, stable, stylish Wayland desktop with zero duplication, smart dynamic behaviors, and optimized performance.**
+- QuickShell (with heavy customization)
+- Hyprland intelligent rules engine
+- DarkMatterShell (AvengeMedia)
+- DankMaterial shell behaviors
+- Zenith Hyprland Alpha V1 (my original approach)
+- Multi-monitor dynamic logic carried over from V1
+
+Goal:
+
+> **A clean, stable, stylish, dynamic Wayland desktop with zero duplication, smart framework logic, and optimized performance.**
 
 ---
 
 # ⚡ Features
 
-### 🌀 **QuickShell Enhancements**
+### 🌀 QuickShell Enhancements
 ```diff
-✓ No more duplicated dock processes  
-✓ No more overlapping top bar  
-✓ RAM leak mitigation  
+✓ No duplicated dock processes  
+✓ No overlapping top bar  
+✓ Reduced RAM usage (leak mitigation)  
 ✓ Fullscreen-safe overlays  
-✓ Auto-detect monitor zones (21:9, vertical setups, etc.)  
+✓ Auto-detect monitor zones (21:9, vertical, multi-monitor)
 ```
 
-### 🖥 **Hyprland Enhancements**
+### 🖥 Hyprland Enhancements
 ```diff
-✓ Smart workspace routing (multi-monitor aware)  
+✓ Smart multi-monitor workspace routing  
 ✓ True restore float (SUPER+V)  
 ✓ Force fullscreen (SUPER+SHIFT+F)  
 ✓ Intelligent reserved zones  
-✓ Cleaner rules.conf with auto-adjusting bar/dock  
-✓ Minimize system (Alpha V2)  
+✓ Clean unified rules.conf  
+✓ Minimize system (Alpha V2 prototype)
 ```
 
-### 🛠 **Configuration Enhancements**
+### 🛠 Configuration & System Improvements
 ```diff
-✓ Unified keybinds.conf (no conflicts)  
+✓ Unified keybinds.conf (no duplicates)  
 ✓ Clean execs.conf ordering  
-✓ Polkit GNOME/MATE fallback  
-✓ Systemd quickshell user service  
-✓ Material Symbols, Inter, FiraCode auto-install  
+✓ GNOME/MATE polkit fallback  
+✓ QuickShell systemd autostart  
+✓ Auto-install Inter, Material Symbols, FiraCode  
+✓ Improved dock/bar transparency rules  
 ```
 
 ---
 
 # 📦 Installation (My Version)
-🚧 *Installer is being rewritten for Hybrid V2. Will include:*
 
-- Auto-detect distro (Arch / Fedora / Ubuntu / PikaOS)  
-- Auto-install QuickShell, Hyprland dependencies  
-- Auto-patch floating rules / workspace logic  
-- Auto-apply monitor-aware safe zones  
+🚧 **Installer rewrite in progress for Hybrid V2**
+
+Will include:
+
+- Auto-detect distro (Arch, Fedora, Ubuntu, PikaOS)
+- Auto-install all QuickShell dependencies
+- Auto-apply patches: float logic, bar/dock rules, fullscreen fixes
+- Auto-detect monitor layout + generate reserved zones
+- Auto-merge user configs with safe fallbacks
 
 Stay tuned.
 
 ---
 
+# 🌟 Inspiration & Shoutouts
+
+### **Personal shoutout to Eli**  
+My early prototype **Zenith Hyprland Alpha V1** was heavily inspired by:
+
+🔗 https://github.com/elifouts/Dotfiles  
+Eli’s workflow, multi-monitor logic, and clean Hyprland structure greatly influenced my first builds.
+
+---
+
+# 💡 Inspirations
+
+These projects shaped the design direction and logic of Zenith Hybrid Alpha V2:
+
+- https://github.com/mylinuxforwork/dotfiles  
+- https://github.com/elifouts/Dotfiles  
+- https://github.com/AvengeMedia/DankMaterialShell  
+- https://github.com/ryzendew/DarkMatter-Shell/tree/main  
+
+Massive respect to these creators — their ideas helped build the foundation that V2 improves and rewrites.
+
+---
+
 # 🧩 Credits & Base Systems
-Below is the **original DarkMatter Shell documentation**, preserved for transparency.
+
+Below is the **original DarkMatter Shell documentation**, preserved inside a dropdown for transparency.
 
 <details>
 <summary><strong>📁 Expand Original DarkMatter Shell Docs</strong></summary>
@@ -103,18 +135,10 @@ Below is the **original DarkMatter Shell documentation**, preserved for transpar
 
 ---
 
-# 🤝 Acknowledgments
-This project builds upon and is inspired by:
+# 📜 License
 
-- **DarkMatter Shell — AvengeMedia**  
-- **DankMaterial Shell**  
-- **Zenith Hyprland Alpha V1 Framework**  
-
-Massive respect to their work — Hybrid V2 is a full rewrite but learned from these systems.
+This project is **for personal use**.  
+You may fork, modify, and use freely — but **no support is provided**.
 
 ---
-
-# 📜 License
-This project is for personal use.  
-You may fork, modify, and use freely — but **no support is provided**.
 
