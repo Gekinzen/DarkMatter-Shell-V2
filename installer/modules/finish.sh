@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-echo -e "\e[92mDarkMatter Shell installation complete! 🎉\e[0m"
-echo -e "\e[92mReboot to start the full shell experience.\e[0m"
+log(){ echo -e "\e[92m[OK]\e[0m $1"; }
+
+log "DarkMatter installation finished!"
+log "Reboot for full experience."

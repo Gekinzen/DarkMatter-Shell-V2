@@ -1,22 +1,14 @@
 #!/usr/bin/env bash
 set -e
 
-LOG="installer/logs/install.log"
+log()  { echo -e "\e[92m[OK]\e[0m $1"; }
+warn() { echo -e "\e[93m[WARN]\e[0m $1"; }
+err()  { echo -e "\e[91m[ERROR]\e[0m $1"; exit 1; }
 
-echo "[INFO] Detecting system..." | tee -a "$LOG"
+log "[INFO] Running detect.sh..."
 
-if [[ ! -f /etc/os-release ]]; then
-    echo "[ERROR] /etc/os-release missing!" | tee -a "$LOG"
-    exit 1
-fi
-
-source /etc/os-release
-ID="${ID,,}"
-LIKE="${ID_LIKE,,}"
-
-if [[ "$ID" == "arch" || "$LIKE" == *"arch"* ]]; then
-    echo "[INFO] Arch-based system detected: $PRETTY_NAME" | tee -a "$LOG"
+if [[ -f /etc/arch-release ]]; then
+    log "Arch Linux detected."
 else
-    echo "[ERROR] Unsupported distro: $PRETTY_NAME" | tee -a "$LOG"
-    exit 1
+    err "This installer only supports Arch Linux."
 fi

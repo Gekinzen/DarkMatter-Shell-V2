@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
-LOG="installer/logs/install.log"
-log() { echo -e "\e[92m[OK]\e[0m $1" | tee -a "$LOG"; }
+log()  { echo -e "\e[92m[OK]\e[0m $1"; }
 
-REPO_DIR="$(realpath "$(dirname "$0")/../..")"
-SRC="$REPO_DIR/hypr"
-DEST="$HOME/.config/hypr"
+SRC="$HOME/DarkMatter-Shell-V2/hypr"
+DST="$HOME/.config/hypr"
 
-mkdir -p "$DEST"
-cp -a "$SRC/"* "$DEST/" || true
+mkdir -p "$DST"
 
-log "Hyprland configuration installed → ~/.config/hypr"
+rsync -av --ignore-existing "$SRC/" "$DST/"
+
+log "Hypr config updated."

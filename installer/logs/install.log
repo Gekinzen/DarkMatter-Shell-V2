@@ -2,22 +2,7 @@
 [92m[OK][0m Running module: detect.sh
 [92m[OK][0m Running module: deps_pacman.sh
 [92m[OK][0m Running module: deps_aur.sh
-[92m[OK][0m Installing AUR dependencies...
-[92m[OK][0m Installing AUR: quickshell-git
-[93m[WARN][0m Failed to install quickshell-git → skipping
-[94m[SKIP][0m anyrun already installed
-[94m[SKIP][0m dgop already installed
-[92m[OK][0m Installing AUR: hyprpicker-git
-[93m[WARN][0m Failed to install hyprpicker-git → skipping
-[94m[SKIP][0m matugen-git already installed
-[94m[SKIP][0m python-pynvml already installed
-[94m[SKIP][0m ttf-inter already installed
-[92m[OK][0m Installing AUR: ttf-material-symbols
-[93m[WARN][0m Failed to install ttf-material-symbols → skipping
-[92m[OK][0m Installing AUR: material-design-icons
-[93m[WARN][0m Failed to install material-design-icons → skipping
-[94m[SKIP][0m wlogout already installed
-[92m[OK][0m AUR stage completed successfully (smart mode).
+[92m[OK][0m Running module: deps_fonts.sh
 [92m[OK][0m Running module: copy_quickshell.sh
 [92m[OK][0m Running module: copy_hypr.sh
 [92m[OK][0m Running module: enable_services.sh

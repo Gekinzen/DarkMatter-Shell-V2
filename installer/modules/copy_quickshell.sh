@@ -1,15 +1,33 @@
 #!/usr/bin/env bash
 set -e
 
-LOG="installer/logs/install.log"
-log() { echo -e "\e[92m[OK]\e[0m $1" | tee -a "$LOG"; }
+log()  { echo -e "\e[92m[OK]\e[0m $1"; }
+warn() { echo -e "\e[93m[WARN]\e[0m $1"; }
 
-REPO_DIR="$(realpath "$(dirname "$0")/../..")"
-SRC="$REPO_DIR/quickshell"
-DEST="$HOME/.config/quickshell"
+SRC="$HOME/DarkMatter-Shell-V2/quickshell"
+DST="$HOME/.config/quickshell"
 
-mkdir -p "$DEST"
+mkdir -p "$DST"
 
-cp -a "$SRC/"* "$DEST/" || true
+log "Syncing QuickShell configuration..."
 
-log "QuickShell configuration installed → ~/.config/quickshell"
+# If rsync exists → use it (fastest & safest)
+if command -v rsync >/dev/null 2>&1; then
+    rsync -av --ignore-existing "$SRC/" "$DST/"
+else
+    warn "rsync not found — using fallback copy method."
+
+    # Manual copy fallback, preserves existing files
+    find "$SRC" -type f | while read f; do
+        rel="${f#$SRC/}"
+        dest="$DST/$rel"
+
+        mkdir -p "$(dirname "$dest")"
+
+        if [[ ! -f "$dest" ]]; then
+            cp "$f" "$dest"
+        fi
+    done
+fi
+
+log "QuickShell config updated."

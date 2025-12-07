@@ -22,7 +22,9 @@ run_module() {
     fi
 }
 
-# ORDER IS IMPORTANT
+##############################
+###  MODULE LOAD ORDER     ###
+##############################
 run_module detect.sh
 run_module deps_pacman.sh
 run_module deps_aur.sh
