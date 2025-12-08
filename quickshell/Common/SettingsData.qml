@@ -2874,18 +2874,7 @@ Singleton {
     }
 
 
-    function setWidgetPosition(id, x, y) {
-        widgetPositions[id] = { "x": x, "y": y }
-    }
-
-    function getWidgetX(id) {
-        return widgetPositions[id]?.x ?? 100
-    }
-
-    function getWidgetY(id) {
-        return widgetPositions[id]?.y ?? 100
-    }
-
+  
 
 
 
