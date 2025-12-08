@@ -13,7 +13,7 @@ RESET="\e[0m"
 echo -e "${GREEN}Zenith Git Push Utility Loaded${RESET}"
 
 # ---------------------------------------------------
-# 1. Read GitHub Token
+# 1. Load GitHub Token
 # ---------------------------------------------------
 TOKEN_FILE="$HOME/.config/github_token"
 
@@ -25,7 +25,7 @@ fi
 GITHUB_TOKEN=$(cat "$TOKEN_FILE")
 
 # ---------------------------------------------------
-# 2. Detect Current Repo & Branch
+# 2. Detect Repo & Branch
 # ---------------------------------------------------
 CURRENT_URL=$(git remote get-url origin 2>/dev/null)
 
@@ -37,7 +37,7 @@ fi
 BRANCH=$(git branch --show-current)
 
 if [ -z "$BRANCH" ]; then
-    echo -e "${RED}[ERROR] You're not on a branch!${RESET}"
+    echo -e "${RED}[ERROR] You are not on a branch!${RESET}"
     exit 1
 fi
 
@@ -45,7 +45,7 @@ echo -e "${GREEN}Active Branch:${RESET} $BRANCH"
 echo -e "${YELLOW}Origin URL:${RESET} $CURRENT_URL"
 
 # ---------------------------------------------------
-# 3. Build Tokenized Push URL (TEMP only)
+# 3. Build Tokenized URL (Temporary)
 # ---------------------------------------------------
 if [[ "$CURRENT_URL" == https://* ]]; then
     PUSH_URL=$(echo "$CURRENT_URL" | sed -E "s#https://#https://$GITHUB_TOKEN@#")
@@ -55,7 +55,7 @@ else
 fi
 
 # ---------------------------------------------------
-# 4. Commit message handling
+# 4. Commit Message
 # ---------------------------------------------------
 if [ -z "$1" ]; then
     echo -e "${YELLOW}[WARN] No commit message. Using default.${RESET}"
@@ -73,9 +73,9 @@ git add -A
 echo -e "${YELLOW}[INFO] Committing...${RESET}"
 git commit -m "$COMMIT_MSG"
 
-echo -e "${YELLOW}[INFO] Pushing to branch '$BRANCH'...${RESET}"
+echo -e "${YELLOW}[INFO] Pushing to '$BRANCH'...${RESET}"
 
-# TEMPORARY PUSH USING TOKEN — DOES NOT CHANGE ORIGIN
+# TEMPORARY authenticated push
 git push "$PUSH_URL" "$BRANCH"
 
-echo -e "${GREEN}[DONE] Push complete without modifying origin.${RESET}"
+echo -e "${GREEN}[DONE] Push complete — origin unchanged.${RESET}"
