@@ -32,6 +32,8 @@ PanelWindow {
 
     property var modelData
     property var notepadVariants: null
+    property var calendarVariants: null  // ADD THIS Calendar 20251208
+
     property bool gothCornersEnabled: SettingsData.topBarGothCornersEnabled
     property real wingtipsRadius: Theme.cornerRadius
     readonly property real _wingR: Math.max(0, wingtipsRadius)
@@ -267,42 +269,41 @@ PanelWindow {
         property var notepadInstance: null
         property bool notepadInstanceVisible: notepadInstance?.isVisible ?? false
         
+
+        ////New Added for Calendar 20251208 popout
         readonly property bool hasActivePopout: {
-            const loaders = [{
-                                 "loader": appDrawerLoader,
-                                 "prop": "shouldBeVisible"
-                             }, {
-                                 "loader": darkDashLoader,
-                                 "prop": "shouldBeVisible"
-                             }, {
-                                 "loader": processListPopoutLoader,
-                                 "prop": "shouldBeVisible"
-                             }, {
-                                 "loader": notificationCenterLoader,
-                                 "prop": "shouldBeVisible"
-                             }, {
-                                 "loader": batteryPopoutLoader,
-                                 "prop": "shouldBeVisible"
-                             }, {
-                                 "loader": vpnPopoutLoader,
-                                 "prop": "shouldBeVisible"
-                             }, {
-                                 "loader": controlCenterLoader,
-                                 "prop": "shouldBeVisible"
-                             }, {
-                                 "loader": clipboardHistoryModalPopup,
-                                 "prop": "visible"
-                             }, {
-                                 "loader": systemUpdateLoader,
-                                 "prop": "shouldBeVisible"
-                             }]
-            return notepadInstanceVisible || loaders.some(item => {
+            const loaders = [
+                { "loader": appDrawerLoader, "prop": "shouldBeVisible" },
+                { "loader": darkDashLoader, "prop": "shouldBeVisible" },
+                { "loader": processListPopoutLoader, "prop": "shouldBeVisible" },
+                { "loader": notificationCenterLoader, "prop": "shouldBeVisible" },
+                { "loader": batteryPopoutLoader, "prop": "shouldBeVisible" },
+                { "loader": vpnPopoutLoader, "prop": "shouldBeVisible" },
+                { "loader": controlCenterLoader, "prop": "shouldBeVisible" },
+                { "loader": clipboardHistoryModalPopup, "prop": "visible" },
+                { "loader": systemUpdateLoader, "prop": "shouldBeVisible" }
+            ]
+            
+            //  Check if any calendar is visible
+            let calendarVisible = false
+            if (root.calendarVariants?.instances) {
+                for (var i = 0; i < root.calendarVariants.instances.length; i++) {
+                    if (root.calendarVariants.instances[i].shouldBeVisible) {
+                        calendarVisible = true
+                        break
+                    }
+                }
+            }
+            
+            return notepadInstanceVisible || calendarVisible || loaders.some(item => {
                 if (item.loader) {
                     return item.loader?.item?.[item.prop]
                 }
                 return false
             })
         }
+
+
 
         Component.onCompleted: {
             notepadInstance = root.getNotepadInstanceForScreen()
@@ -985,6 +986,27 @@ PanelWindow {
                                 widgetHeight: root.widgetHeight
                                 section: topBarContent.getWidgetSection(parent) || "center"
                                 parentScreen: root.screen
+
+
+                                //  Get the calendar for THIS screen
+                                calendarPopout: {
+                                    if (!root.calendarVariants?.instances) {
+                                        console.log("No calendar variants available")
+                                        return null
+                                    }
+                                    
+                                    for (var i = 0; i < root.calendarVariants.instances.length; i++) {
+                                        var calendar = root.calendarVariants.instances[i]
+                                        if (calendar.screen?.name === root.screen?.name) {
+                                            console.log("Found calendar for screen:", root.screen?.name)
+                                            return calendar
+                                        }
+                                    }
+                                    console.log("No calendar found for screen:", root.screen?.name)
+                                    return null
+                                }
+                                
+                                calendarPopoutLoader: null  // Not needed with Variants
                             }
                         }
 

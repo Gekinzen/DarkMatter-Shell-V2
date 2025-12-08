@@ -6,6 +6,8 @@ import qs.Widgets
 
 Rectangle {
     id: root
+    property var calendarPopout: null
+    property var calendarPopoutLoader: null
 
     property bool compactMode: false
     property string section: "center"
@@ -62,6 +64,39 @@ Rectangle {
         const baseColor = clockMouseArea.containsMouse ? Theme.widgetBaseHoverColor : Theme.widgetBaseBackgroundColor;
         return Qt.rgba(baseColor.r, baseColor.g, baseColor.b, baseColor.a * Theme.widgetTransparency);
     }
+
+
+
+    //  Move MouseArea to be on top of everything
+    MouseArea {
+        id: clockMouseArea
+        anchors.fill: parent
+        hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor  // Add pointer cursor
+        z: 100  //  Ensure it's on top
+
+        onClicked: {
+            console.log("Clock clicked!")  //  Debug log
+            if (calendarPopout) {
+                console.log("Toggling calendar")  // Debug log
+                calendarPopout.toggle()
+            } else {
+                console.log("No calendar popout available")  //  Debug log
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     Row {
         id: clockRow
@@ -202,11 +237,5 @@ Rectangle {
         }
     }
 
-    MouseArea {
-        id: clockMouseArea
-
-        anchors.fill: parent
-        hoverEnabled: true
-    }
 
 }

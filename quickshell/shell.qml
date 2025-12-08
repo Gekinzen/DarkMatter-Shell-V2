@@ -27,6 +27,8 @@ import qs.Modules.Settings
 import qs.Modules.TopBar
 import qs.Modules.Desktop
 import qs.Services
+import "Modules/Calendar"
+
 
 ShellRoot {
     id: root
@@ -47,6 +49,36 @@ ShellRoot {
             })
         }
     }
+
+    //  Use Variants for proper lazy loading (one calendar per screen)
+    Variants {
+        id: calendarPopoutVariants
+        
+        model: Quickshell.screens
+        delegate: Component {
+            CalendarPopout {
+                screen: modelData
+            }
+        }
+    }
+    
+    //  Expose variants directly
+    readonly property var calendarVariants: calendarPopoutVariants
+
+    
+    //  Helper function to get calendar for specific screen
+    function getCalendarForScreen(screenName) {
+        if (!calendarPopoutVariants?.instances) return null
+        
+        for (var i = 0; i < calendarPopoutVariants.instances.length; i++) {
+            var calendar = calendarPopoutVariants.instances[i]
+            if (calendar.screen?.name === screenName) {
+                return calendar
+            }
+        }
+        return null
+    }
+
 
     WallpaperBackground {}
 
@@ -176,6 +208,7 @@ ShellRoot {
                 delegate: TopBar {
                     modelData: item
                     notepadVariants: notepadSlideoutVariants
+                    calendarVariants: root.calendarVariants  // calendar 20251208
                     onColorPickerRequested: colorPickerModal.show()
                 }
             }
@@ -428,6 +461,10 @@ ShellRoot {
             id: appDrawerPopout
         }
     }
+
+
+
+
 
     SpotlightModal {
         id: spotlightModal
